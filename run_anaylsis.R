@@ -5,7 +5,7 @@ unzip("data.zip")
 
 #Read the various text files into Rstudio as data frames
 features <- read.table("UCI HAR Dataset/features.txt")[ ,2]
-activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt")
+activity <- read.table("UCI HAR Dataset/activity_labels.txt")
 sub_test <- read.table("UCI HAR Dataset/test/subject_test.txt", col.names = "Subject_ID")
 sub_train <- read.table("UCI HAR Dataset/train/subject_train.txt", col.names = "Subject_ID")
 X_test <- read.table("UCI HAR Dataset/test/X_test.txt", col.names = features)
@@ -26,7 +26,7 @@ TestNTrain <- TestNTrain[ , cols]
 
 #Name the activites in TestNTrain
 library(dplyr)
-TestNTrain<- mutate(TestNTrain, Activity_label = activity_labels[TestNTrain[, 2], 2])
+TestNTrain<- mutate(TestNTrain, Activity_label = activity[TestNTrain[, 2], 2])
 TestNTrain <- TestNTrain[ , c(1,2, 82, 3:81)]
 
 #Label the columns with descriptive variable names
@@ -50,3 +50,5 @@ measureVar = setdiff(names(TestNTrain), idVar)
 library(reshape2)
 meltedData <- melt(TestNTrain, id = idVar, measure.vars = measureVar)
 AvgData <- dcast(md, Subject_ID + Activity_ID + Activity_label ~ variable, mean)
+
+write.table(AvgData, file = "AvgData.txt", row.names = FALSE)
